@@ -81,8 +81,8 @@ trap 'dothis SIGRTMAX'    SIGRTMAX
 function dothis()
 {
 echo "`date +"%Y-%m-%d %T"` - Intercepted signal $1"| tee $LOG
-SIG=`trap -l|sed -nr 's/.*( |^)([0-9]+)(\)) SIGBUS.*/\2/p'`
-exit $SIG
+#SIG=`trap -l|sed -nr 's/.*( |^)([0-9]+)(\)) SIGBUS.*/\2/p'`
+#exit $SIG
 }
 
 # Infinite loop
