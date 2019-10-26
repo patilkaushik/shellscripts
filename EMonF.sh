@@ -1,5 +1,4 @@
 #/bin/bash
-
 ######################################
 # This is Email Monitoring Framework #
 # This provides template for writing #
