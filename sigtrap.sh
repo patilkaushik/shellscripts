@@ -10,7 +10,7 @@ echo $$
 
 # Definition
 
-LOG=/path/to/log
+LOG=/tmp/`basename $0`.log
 
 # Trap all kill signals
 # I don't no why I included SIGKILL -9 ;)
@@ -80,7 +80,7 @@ trap 'dothis SIGRTMAX'    SIGRTMAX
 
 function dothis()
 {
-echo "`date +"%Y-%m-%d %T"` - Intercepted signal $1"| tee $LOG
+echo "`date +"%Y-%m-%d %T"` - Intercepted signal $1"| tee -a $LOG
 #SIG=`trap -l|sed -nr 's/.*( |^)([0-9]+)(\)) SIGBUS.*/\2/p'`
 #SIG=`trap -l | awk '{for(i=1;i<=NF;i++)if($i~/^<SIG\+>$/)print $(i-1)}' | awk -F ")" '{print $1}'`
 #exit $SIG
