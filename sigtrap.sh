@@ -16,7 +16,7 @@ LOG=/tmp/`basename $0`.log
 # I don't know why I included SIGKILL -9 ;)
 for sig in `kill -l | sed -r 's/[0-9]{1,2}\)//g'`
 do
-	trap "dothis $1" $1
+	trap "dothis $sig" $sig
 done
 
 function dothis()
