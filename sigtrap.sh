@@ -21,10 +21,11 @@ done
 
 function dothis()
 {
-	printf "%(%Y-%m-%d %T)T - Intercepted signal %s\n" -1 "$1" >> "$LOG"
-	#SIG=`trap -l|sed -nr 's/.*( |^)([0-9]+)(\)) SIGBUS.*/\2/p'`
-	#SIG=`trap -l | awk '{for(i=1;i<=NF;i++)if($i~/^<SIG\+>$/)print $(i-1)}' | awk -F ")" '{print $1}'`
-	#exit $SIG
+TRAP=`trap -l|sed 's/)//g'`
+cmd="echo "$TRAP"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
+SIGNUM=`eval $cmd`
+echo "`date +"%Y-%m-%d %T"` - Intercepted signal $SIGNUM $1"| tee -a $LOG
+exit $SIGNUM
 }
 
 # Infinite loop
