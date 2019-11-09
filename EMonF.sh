@@ -1,14 +1,13 @@
 #/bin/bash
-######################################
-# This is Email Monitoring Framework #
-# This provides template for writing #
-# Email monitoring scripts           #
-######################################
-# Author:                            #
-# Contact:                           #
-# Description:                       #
-# Version:                           #
-######################################
+############################################################################
+# This is Email Monitoring Framework. This provides template for writing   #
+# Email monitoring scripts                                                 #
+############################################################################
+# Author:                                                                  #
+# Contact:                                                                 #
+# Description:                                                             #
+# Version:                                                                 #
+############################################################################
 
 # Definition
 
