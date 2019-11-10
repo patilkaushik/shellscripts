@@ -9,7 +9,6 @@
 echo $$
 
 # Definition
-
 LOG=/tmp/`basename $0`.log
 
 # Gather a list of the signals, then trap them
@@ -19,17 +18,17 @@ do
 	trap "dothis $sig" $sig
 done
 
+# Print intercepted kill signal and log it
 function dothis()
 {
-TRAP=`trap -l|sed 's/)//g'`
-cmd="echo "$TRAP"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
-SIGNUM=`eval $cmd`
-echo "`date +"%Y-%m-%d %T"` - Intercepted signal $SIGNUM $1"| tee -a $LOG
-exit $SIGNUM
+	TRAP=`trap -l|sed 's/)//g'`
+	cmd="echo "$TRAP"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
+	SIGNUM=`eval $cmd`
+	printf "`date +"%Y-%m-%d %T"` - Intercepted signal $SIGNUM $1"| tee -a $LOG
+	exit $SIGNUM
 }
 
 # Infinite loop
-
 while true
 do
 	sleep 2
