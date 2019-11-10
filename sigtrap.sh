@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ######################################
 # This script traps the kill signals #
 # and prints the kill signal         #
@@ -21,8 +20,7 @@ done
 # Print intercepted kill signal and log it
 function dothis()
 {
-	TRAP=`trap -l|sed 's/)//g'`
-	cmd="echo "$TRAP"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
+	cmd="echo "`trap -l|sed 's/)//g'`"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
 	SIGNUM=`eval $cmd`
 	printf "`date +"%Y-%m-%d %T"` - Intercepted signal $SIGNUM $1"| tee -a $LOG
 	exit $SIGNUM
