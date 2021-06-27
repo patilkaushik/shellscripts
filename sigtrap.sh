@@ -8,7 +8,7 @@
 echo $$
 
 # Definition
-LOG=/tmp/`basename $0`.log
+LOG=/tmp/$(basename $0).log
 
 # Gather a list of the signals, then trap them
 # I don't know why I included SIGKILL -9 ;)
@@ -21,7 +21,7 @@ done
 function dothis()
 {
 	cmd="echo "$(trap -l|sed 's/)//g')"|sed -n 's/$1.*//p'|awk '{print \$NF}'"
-	SIGNUM=`eval $cmd`
+	SIGNUM=$(eval $cmd)
 	printf "$(date +"%Y-%m-%d %T") - Intercepted signal $SIGNUM $1"| tee -a $LOG
 	exit $SIGNUM
 }
