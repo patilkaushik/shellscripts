@@ -53,6 +53,12 @@ if ! df $mount > /dev/null 2>&1; then
 	exit 1
 fi
 
+# User check 
+
+if [ $(whoami) != root ]; then 
+	echo "Run as a root"
+fi
+
 
 # Color lib
 
@@ -77,6 +83,38 @@ Colors() {
 
 #
 
+# Logging function
+
+#mLogger - Displays the logs on the STDOUT and stores it in the log file.
+# Syntax mLogger <-i|-e|-w> "Logs to capture"
+# -i => INFO -e => ERROR -w => WARNING
+mLogger () {
+
+if [ $# -gt 0 ]
+	then
+case $1 in
+	-e) FLAG="ERROR : "
+		shift
+		;;
+	-i) FLAG="INFO : "
+		shift
+		;;
+	-w) FLAG="WARNING : "
+		shift
+		;;
+	-d) FLAG="DEBUG : "
+		shift
+		;;
+	*) FLAG=""
+		;;  
+esac
+echo "$(date '+%h %d %H:%M:%S') : $(whoami) : ${0} : ${FLAG}$@"|tee -a $LOG
+else
+	exit 100
+fi
+}
+#
+
 
 ## Create lock file 
 
@@ -92,9 +130,6 @@ touch $LOCK_FILE
 
 rm -rf $LOCK_FILE # at the time of exit
 ##
-
-
-
 
 
 # Parse command inputs to comman line
