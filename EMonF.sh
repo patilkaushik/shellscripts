@@ -15,6 +15,7 @@
 MAILLIST=name@email.com,yourname@email.com
 EMAILBODY="This is your email alert"
 LOGDIR="/path/to/logdir"
+LOG="${LOGDIR}/${0}.log"
 TMPDIR="/path/to/tmpdir"
 
 USAGE="Usage: command -ihv args"
@@ -47,7 +48,7 @@ if [ $? -eq 0 ]; then
   exit 0
 fi
 
-# command fails
+# Command fails
 if ! df $mount > /dev/null 2>&1; then
 	echo "Bad mount"
 	exit 1
@@ -60,8 +61,7 @@ if [ $(whoami) != root ]; then
 fi
 
 
-# Color lib
-
+# Color library
 Colors() {
 	
     Escape="\033";
@@ -80,7 +80,6 @@ Colors() {
 		echo -e "Below variables are available for respective colour \n ${BlackF}BlackF\t${RedF}RedF\t${GreenF}GreenF\t${YellowF}YellowF\t${BlueF}BlueF\t${Purplef}Purplef\t${CyanF}CyanF\t${WhiteF}WhiteF\t\n ${Reset}${BlackB}BlackB\t${RedB}RedB\t${GreenB}GreenB\t${YellowB}YellowB\t${BlueB}BlueB\t${PurpleB}PurpleB\t${CyanB}CyatB\t${WhiteB}WhiteB\t${Reset}"
 	fi
 }
-
 #
 
 # Logging function
@@ -89,28 +88,54 @@ Colors() {
 # Syntax mLogger <-i|-e|-w> "Logs to capture"
 # -i => INFO -e => ERROR -w => WARNING
 mLogger () {
-
-if [ $# -gt 0 ]
+if [ $# -gt 0 ]; 
 	then
-case $1 in
-	-e) FLAG="ERROR : "
-		shift
-		;;
-	-i) FLAG="INFO : "
-		shift
-		;;
-	-w) FLAG="WARNING : "
-		shift
-		;;
-	-d) FLAG="DEBUG : "
-		shift
-		;;
-	*) FLAG=""
-		;;  
-esac
-echo "$(date '+%h %d %H:%M:%S') : $(whoami) : ${0} : ${FLAG}$@"|tee -a $LOG
-else
-	exit 100
+		case $1 in
+			-e) FLAG="ERROR : "
+				shift
+				;;
+			-i) FLAG="INFO : "
+				shift
+				;;
+			-w) FLAG="WARNING : "
+				shift
+				;;
+			-d) FLAG="DEBUG : "
+				shift
+				;;
+			*) FLAG=""
+				;;  
+		esac
+		echo "$(date '+%h %d %H:%M:%S') : $(whoami) : ${0} : ${FLAG}$@"|tee -a $LOG
+	else
+		exit 100
+fi
+}
+#
+
+# Log archiving
+
+archive(){
+RETENTION=30
+
+if [ -f $LOG ]; then
+
+	for i in $( seq ${RETENTION}|tac); 
+		do 
+			if [[ $i -eq $RETENTION ]]; then
+				if [ -f ${LOG}.${i} ]; then
+					rm -rf ${LOG}.${i}
+				fi	
+			else
+				if [ -f ${LOG}.${i} ]; then
+					mv ${LOG}.${i} ${LOG}.$((i+1))
+				fi
+			fi
+		done
+	if [ -f ${LOG} ]; then
+		mv ${LOG} ${LOG}.1
+	fi
+
 fi
 }
 #
@@ -131,6 +156,35 @@ touch $LOCK_FILE
 rm -rf $LOCK_FILE # at the time of exit
 ##
 
+
+# Menu
+#COLUMNS=40;export COLUMNS;
+TITLE="--::Menu::--"
+PROMPT="Pick an option | (Enter) to reprint options | (Q)uit "
+OPTIONS=("Memory Eater" "WIP" "WIP")
+
+echo "$TITLE"
+PS3="$PROMPT"$'\n'
+select opt in "${OPTIONS[@]}" "Quit"; do
+#unset COLUMNS
+    case "$REPLY" in
+
+    1 )   echo "-:$opt:-";
+          ps axu | awk '{printf("%s\t %6s\t %6s\t %s \n", $2, $3, $4, $11)}' | head -1; ps aux --no-headers|awk '{printf("%s\t %6s\t %6s\t %s \n", $2, $3, $4, $11)}' | sort -k3 -nr |head -20
+          ;;
+
+    Q|4) echo "Bye for now"
+          exit 0;
+          ;;
+
+    * )   echo "-:$opt:-"
+          echo "Wrong option"
+          ;;
+
+    esac
+
+done
+#
 
 # Parse command inputs to comman line
 
@@ -164,6 +218,7 @@ while getopts ":i:vh" optname
   done
 
 #
+
 
 
 # Your logic goes here
